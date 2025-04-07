@@ -6,20 +6,16 @@ include(CTest)
 enable_testing()
 
 find_package(ICU REQUIRED COMPONENTS i18n uc data io)
-find_library(DL_LIBRARY dl)  # Ensure dl library is found
+find_library(DL_LIBRARY dl)
+
+# 👉 Force static ICU linking
+foreach(lib ${ICU_LIBRARIES})
+    get_filename_component(libpath ${lib} PATH)
+    link_directories(${libpath})
+endforeach()
+add_definitions(-DU_STATIC_IMPLEMENTATION)
 
 set(CMAKE_GENERATOR_PLATFORM Win32 HINT)
-
-# ✅ Detect if running on Ubuntu 20.04
-if(EXISTS "/etc/os-release")
-    file(READ "/etc/os-release" OS_RELEASE_CONTENTS)
-    if(OS_RELEASE_CONTENTS MATCHES "Ubuntu 20.04")
-        message(STATUS "Detected Ubuntu 20.04 - Forcing static ICU linking")
-        set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-        set(ICU_USE_STATIC_LIBS ON)
-        add_definitions(-DICU_STATIC)
-    endif()
-endif()
 
 if(MSVC)
     add_compile_options(/w44005 /w44244 /w44311 /w44211 /w44302 /w44267 /w44312 /w45033 /w44624 /w44996 /w44273)
@@ -42,8 +38,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 
-# build shared library (DLL in Windows)
-# add_definitions(-DSHARED_LIB)
+# (optional commented out) # include_directories(/usr/local/libiodbc-3.52.12/include)
 
 include_directories(cs/include)
 include_directories(include)
