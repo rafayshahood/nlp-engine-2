@@ -2,10 +2,6 @@ cmake_minimum_required(VERSION 3.5.0)
 project(nlp VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 17)
 
-# FORCE static linking
-set(ICU_USE_STATIC_LIBS ON)
-set(BUILD_SHARED_LIBS OFF)
-
 include(CTest)
 enable_testing()
 
