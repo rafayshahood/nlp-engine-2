@@ -66,11 +66,11 @@ jobs:
             zip -r icu-libs.zip icu-libs
 
         - name: Upload ICU Libraries Zip (20.04)
-        if: matrix.os == 'ubuntu-20.04'
-        uses: actions/upload-artifact@v4
-        with:
-          name: icu-libs-ubuntu-${{ env.VERSION_SUFFIX }}
-          path: icu-libs.zip
+          if: matrix.os == 'ubuntu-20.04'
+          uses: actions/upload-artifact@v4
+          with:
+            name: icu-libs-ubuntu-${{ env.VERSION_SUFFIX }}
+            path: icu-libs.zip
 
       # ===============================
       # Non-20.04 (Normal Build)
