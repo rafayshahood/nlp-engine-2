@@ -56,6 +56,9 @@ jobs:
             cp ./bin/nlp ./bin/nlpl.exe
             cp /usr/lib/x86_64-linux-gnu/libicutu.so.66 ./bin/libicutu.so
             cp /usr/lib/x86_64-linux-gnu/libicuuc.so.66 ./bin/libicuuc.so
+            cp /usr/lib/x86_64-linux-gnu/libicuuc.so.66 ./bin/libicui18n.so
+
+            
             ./bin/nlp --version
             ./bin/nlp -ANA ./analyzers/parse-en-us -WORK ./ ./analyzers/parse-en-us/input/doj.txt -LOG rfb-logs -DEV
 
@@ -131,6 +134,13 @@ jobs:
           name: libicuuc-ubuntu-${{ env.VERSION_SUFFIX }}
           path: bin/libicuuc.so
 
+      - name: Upload libicui18n (ubuntu-20.04)  # <== ADD THIS
+        if: matrix.os == 'ubuntu-20.04'
+        uses: actions/upload-artifact@v4
+        with:
+          name: libicui18n-ubuntu-${{ env.VERSION_SUFFIX }}
+          path: bin/libicui18n.so
+          
       - name: Upload libicutu.a (non ubuntu-20.04)
         if: matrix.os != 'ubuntu-20.04'
         uses: actions/upload-artifact@v4
