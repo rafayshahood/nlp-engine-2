@@ -23,3 +23,6 @@ find_library(DL_LIBRARY dl)
 
 add_executable(nlp ${nlp_src})
 target_link_libraries(nlp PUBLIC prim kbm consh words lite ${ICU_LIBRARIES} ${DL_LIBRARY})
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set_target_properties(nlp PROPERTIES INSTALL_RPATH "$ORIGIN/../icu-libs")
+endif()
