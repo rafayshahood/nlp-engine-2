@@ -10,6 +10,17 @@ find_library(DL_LIBRARY dl)  # Ensure dl library is found
 
 set(CMAKE_GENERATOR_PLATFORM Win32 HINT)
 
+# ✅ Detect if running on Ubuntu 20.04
+if(EXISTS "/etc/os-release")
+    file(READ "/etc/os-release" OS_RELEASE_CONTENTS)
+    if(OS_RELEASE_CONTENTS MATCHES "Ubuntu 20.04")
+        message(STATUS "Detected Ubuntu 20.04 - Forcing static ICU linking")
+        set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+        set(ICU_USE_STATIC_LIBS ON)
+        add_definitions(-DICU_STATIC)
+    endif()
+endif()
+
 if(MSVC)
     add_compile_options(/w44005 /w44244 /w44311 /w44211 /w44302 /w44267 /w44312 /w45033 /w44624 /w44996 /w44273)
     add_definitions(-D_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING)
