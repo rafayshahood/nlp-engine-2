@@ -108,7 +108,7 @@ jobs:
       # Upload Artifacts (All Versions)
       # ===============================
 
-        - name: Upload nlpl.exe
+      - name: Upload nlpl.exe
         uses: actions/upload-artifact@v4
         with:
           name: nlpl-ubuntu-${{ env.VERSION_SUFFIX }}.exe
