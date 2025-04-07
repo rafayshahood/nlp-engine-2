@@ -1,14 +1,13 @@
 if(WIN32)
-  add_definitions( -DMSVC_VERSION=${MSVC_VERSION} -D_CRT_SECURE_NO_WARNINGS )
+  add_definitions(-DMSVC_VERSION=${MSVC_VERSION} -D_CRT_SECURE_NO_WARNINGS)
 else()
-  add_definitions( -DLINUX -Wno-write-strings -Wno-deprecated)
+  add_definitions(-DLINUX -Wno-write-strings -Wno-deprecated)
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
 
-# Ensure dl library is found on Linux
 if(NOT WIN32)
   find_library(DL_LIBRARY dl)
 endif()
@@ -20,7 +19,7 @@ if(WIN32)
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE}/test-nlp.exe ${CMAKE_SOURCE_DIR}/bin/test-nlp.exe)
 else()
   add_executable(test-nlp.exe main.cpp)
-  target_link_libraries(test-nlp.exe prim kbm consh words lite ${ICU_LIBRARIES} ${DL_LIBRARY})
+  target_link_libraries(test-nlp.exe prim kbm consh words lite ${ICU_LIBRARIES} ${DL_LIBRARY} -static)
   add_custom_command(TARGET test-nlp.exe POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/bin/test-nlp.exe ${CMAKE_SOURCE_DIR}/bin/test-nlp.exe)
 endif()
