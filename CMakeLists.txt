@@ -6,14 +6,7 @@ include(CTest)
 enable_testing()
 
 find_package(ICU REQUIRED COMPONENTS i18n uc data io)
-find_library(DL_LIBRARY dl)
-
-# 👉 Force static ICU linking
-foreach(lib ${ICU_LIBRARIES})
-    get_filename_component(libpath ${lib} PATH)
-    link_directories(${libpath})
-endforeach()
-add_definitions(-DU_STATIC_IMPLEMENTATION)
+find_library(DL_LIBRARY dl)  # Ensure dl library is found
 
 set(CMAKE_GENERATOR_PLATFORM Win32 HINT)
 
@@ -38,7 +31,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 
-# (optional commented out) # include_directories(/usr/local/libiodbc-3.52.12/include)
+# build shared library (DLL in Windows)
+# add_definitions(-DSHARED_LIB)
 
 include_directories(cs/include)
 include_directories(include)
