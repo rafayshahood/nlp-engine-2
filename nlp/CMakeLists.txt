@@ -1,6 +1,6 @@
 #include_directories(/usr/local/libiodbc-3.52.12/include)
 
-set(VERSION ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/version.o)
+#set(VERSION ${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/version.o)
 
 add_definitions( -DNLP_EXPORTS )
 if(WIN32)
@@ -22,4 +22,15 @@ endif()
 find_library(DL_LIBRARY dl)
 
 add_executable(nlp ${nlp_src})
-target_link_libraries(nlp PUBLIC prim kbm consh words lite ${ICU_LIBRARIES} ${DL_LIBRARY})
+
+# ✅ On Ubuntu 20.04, link static ICU libraries manually
+if(ICU_STATIC)
+  target_link_libraries(nlp PUBLIC prim kbm consh words lite
+    /usr/lib/x86_64-linux-gnu/libicuuc.a
+    /usr/lib/x86_64-linux-gnu/libicui18n.a
+    /usr/lib/x86_64-linux-gnu/libicudata.a
+    ${DL_LIBRARY}
+  )
+else()
+  target_link_libraries(nlp PUBLIC prim kbm consh words lite ${ICU_LIBRARIES} ${DL_LIBRARY})
+endif()
