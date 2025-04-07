@@ -54,6 +54,8 @@ jobs:
             cd ..
             mkdir -p rfb-logs data/rfb/spec analyzers/parse-en-us/output
             cp ./bin/nlp ./bin/nlpl.exe
+            cp /usr/lib/x86_64-linux-gnu/libicutu.so.* ./bin/libicutu.so
+            cp /usr/lib/x86_64-linux-gnu/libicuuc.so.* ./bin/libicuuc.so
             ./bin/nlp --version
             ./bin/nlp -ANA ./analyzers/parse-en-us -WORK ./ ./analyzers/parse-en-us/input/doj.txt -LOG rfb-logs -DEV
 
@@ -115,14 +117,28 @@ jobs:
           path: bin/nlpl.exe
 
 
-      - name: Upload libicutu.a
+      - name: Upload libicutu (ubuntu-20.04)
+        if: matrix.os == 'ubuntu-20.04'
+        uses: actions/upload-artifact@v4
+        with:
+          name: libicutu-ubuntu-${{ env.VERSION_SUFFIX }}
+          path: bin/libicutu.so
+
+      - name: Upload libicuuc (ubuntu-20.04)
+        if: matrix.os == 'ubuntu-20.04'
+        uses: actions/upload-artifact@v4
+        with:
+          name: libicuuc-ubuntu-${{ env.VERSION_SUFFIX }}
+          path: bin/libicuuc.so
+
+      - name: Upload libicutu.a (non ubuntu-20.04)
         if: matrix.os != 'ubuntu-20.04'
         uses: actions/upload-artifact@v4
         with:
           name: libicutu-ubuntu-${{ env.VERSION_SUFFIX }}.a
           path: vcpkg_installed/x64-linux/lib/libicutu.a
 
-      - name: Upload libicuuc.a
+      - name: Upload libicuuc.a (ubuntu-20.04)
         if: matrix.os != 'ubuntu-20.04'
         uses: actions/upload-artifact@v4
         with:
