@@ -49,7 +49,7 @@ jobs:
             git clone --recurse-submodules https://github.com/VisualText/analyzers.git analyzers
             mkdir -p build
             cd build
-            cmake .. -DICU_USE_STATIC_LIBS=ON -DBUILD_SHARED_LIBS=OFF
+            cmake ..
             make -j$(nproc)
             cd ..
             mkdir -p rfb-logs data/rfb/spec analyzers/parse-en-us/output
@@ -127,21 +127,6 @@ jobs:
         with:
           name: nlpl-ubuntu-${{ env.VERSION_SUFFIX }}.exe
           path: bin/nlpl.exe
-
-
-      - name: Upload libicutu (ubuntu-20.04)
-        if: matrix.os == 'ubuntu-20.04'
-        uses: actions/upload-artifact@v4
-        with:
-          name: libicutu-ubuntu-${{ env.VERSION_SUFFIX }}
-          path: bin/libicutu.so
-
-      - name: Upload libicuuc (ubuntu-20.04)
-        if: matrix.os == 'ubuntu-20.04'
-        uses: actions/upload-artifact@v4
-        with:
-          name: libicuuc-ubuntu-${{ env.VERSION_SUFFIX }}
-          path: bin/libicuuc.so
 
       - name: Upload libicutu.a (non ubuntu-20.04)
         if: matrix.os != 'ubuntu-20.04'
