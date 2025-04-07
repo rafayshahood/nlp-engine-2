@@ -49,7 +49,7 @@ jobs:
             git clone --recurse-submodules https://github.com/VisualText/analyzers.git analyzers
             mkdir -p build
             cd build
-            cmake ..
+            cmake .. -DCMAKE_EXE_LINKER_FLAGS="-static-libgcc -static-libstdc++" 
             make -j$(nproc)
             cd ..
             mkdir -p rfb-logs data/rfb/spec analyzers/parse-en-us/output
