@@ -165,16 +165,21 @@ jobs:
         body: "NLP Engine Release ${{ env.TAG_NAME }}"
         files: |
           ./nlpw.exe
-          ./nlpl.exe
+          ./nlpl-${{ matrix.os }}.exe  # Adjust the filename for the correct Linux version
           ./nlpm.exe
           ./icudt74.dll
           ./icuuc74.dll
-          ./libicutu.a
-          ./libicuuc.a
+          ./libicutu-${{ matrix.os }}.a  # Adjust the filename for the Linux version
+          ./libicuuc-${{ matrix.os }}.a  # Adjust the filename for the Linux version
           ./libicutum.a
           ./libicuucm.a
           ./nlpengine.zip
           ./visualtext.zip
+          ./icu-libs-ubuntu-20.04.zip  # ICU libs for Ubuntu 20.04 (assuming you uploaded this file)
+          ./libicutu-ubuntu-22.04.a.zip  # ICU libraries for Ubuntu 22.04 (adjust as needed)
+          ./libicuuc-ubuntu-22.04.a.zip  # ICU libraries for Ubuntu 22.04 (adjust as needed)
+          ./libicutu-ubuntu-latest.a.zip  # ICU libraries for latest Ubuntu version (adjust as needed)
+          ./libicuuc-ubuntu-latest.a.zip  # ICU libraries for latest Ubuntu version (adjust as needed)
         token: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Trigger nlp-engine-windows workflow (API direct)
