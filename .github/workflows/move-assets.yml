@@ -17,6 +17,10 @@ on:
 jobs:
   download_assets:
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-latest]
 
     steps:
     - name: Checkout repository
@@ -71,11 +75,12 @@ jobs:
         workflow: build-windows.yml
         name: "icuuc74.dll"
         
+    # Fetch the Linux exe for the matrix OS version
     - name: Fetch Linux exe
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-linux.yml
-        name: nlpl.exe
+        name: nlpl-${{ matrix.os }}.exe  # Adjust the artifact name based on the matrix OS version
       
     - name: List Artifacts from MacOS Build
       run: |
@@ -105,17 +110,26 @@ jobs:
         workflow: build-visualfiles.yml
         name: "visualtext.zip"
 
-    - name: Fetch Linux icu1
-      uses: dawidd6/action-download-artifact@v8
-      with:
-        workflow: build-linux.yml
-        name: "libicutu.a"
 
-    - name: Fetch Linux icu2
+    - name: Fetch Linux icu1 (non 20.04)
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-linux.yml
-        name: "libicuuc.a"
+        name: libicutu-${{ matrix.os }}.a
+
+    - name: Fetch Linux icu2 (non 20.04)
+      if: matrix.os != 'ubuntu-20.04'
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: build-linux.yml
+        name: libicuuc-${{ matrix.os }}.a
+
+    - name: Fetch ICU Libraries for Linux 20.04
+      if: matrix.os == 'ubuntu-20.04'
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: build-linux.yml
+        name: icu-libs-ubuntu-20.04
         
     - name: Fetch MacOS libicutum.a
       uses: dawidd6/action-download-artifact@v8
