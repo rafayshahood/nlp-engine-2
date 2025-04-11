@@ -112,6 +112,7 @@ jobs:
 
 
     - name: Fetch Linux icu1 (non 20.04)
+      if: matrix.os != 'ubuntu-20.04'
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-linux.yml
