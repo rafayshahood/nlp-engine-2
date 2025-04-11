@@ -63,7 +63,7 @@ jobs:
         name: "icuuc74.dll"
 
     # Fetch the correct Linux exe based on the OS version
-    - name: Fetch Linux exe
+    - name: Fetch Linux exe for ubuntu-${{ matrix.os }}
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-linux.yml
