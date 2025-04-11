@@ -74,13 +74,15 @@ jobs:
       with:
         workflow: build-windows.yml
         name: "icuuc74.dll"
-        
-    # Fetch the Linux exe for the matrix OS version
+
     - name: Fetch Linux exe
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-linux.yml
-        name: nlpl-${{ matrix.os }}.exe  # Adjust the artifact name based on the matrix OS version
+        name: nlpl-${{ matrix.os }}.exe.zip 
+      run: |
+        unzip nlpl-${{ matrix.os }}.exe.zip
+        mv nlpl.exe ./nlpl-${{ matrix.os }}.exe
       
     - name: List Artifacts from MacOS Build
       run: |
@@ -110,27 +112,35 @@ jobs:
         workflow: build-visualfiles.yml
         name: "visualtext.zip"
 
-
     - name: Fetch Linux icu1 (non 20.04)
       if: matrix.os != 'ubuntu-20.04'
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-linux.yml
-        name: libicutu-${{ matrix.os }}.a
+        name: libicutu-${{ matrix.os }}.a.zip
+      run: |
+        unzip libicutu-${{ matrix.os }}.a.zip
+        mv libicutu.a ./libicutu-${{ matrix.os }}.a
 
     - name: Fetch Linux icu2 (non 20.04)
       if: matrix.os != 'ubuntu-20.04'
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-linux.yml
-        name: libicuuc-${{ matrix.os }}.a
+        name: libicuuc-${{ matrix.os }}.a.zip
+      run: |
+        unzip libicuuc-${{ matrix.os }}.a.zip
+        mv libicuuc.a ./libicuuc-${{ matrix.os }}.a
 
     - name: Fetch ICU Libraries for Linux 20.04
       if: matrix.os == 'ubuntu-20.04'
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-linux.yml
-        name: icu-libs-ubuntu-20.04
+        name: icu-libs-ubuntu-20.04.zip  # Adjusted for the new artifact name
+      run: |
+        unzip icu-libs-ubuntu-20.04.zip
+        mv icu-libs/* ./  # Move the contents of icu-libs/ to the current directory
         
     - name: Fetch MacOS libicutum.a
       uses: dawidd6/action-download-artifact@v8
