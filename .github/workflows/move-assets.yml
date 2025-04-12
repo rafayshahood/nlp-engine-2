@@ -17,17 +17,13 @@ on:
 jobs:
   download_assets:
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-latest]
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        fetch-depth: 0  # Fetch all history and tags
-    
+        fetch-depth: 0
+
     - name: Extract tag name from ref or get latest tag
       id: get_tag
       run: |
@@ -40,9 +36,17 @@ jobs:
           if [ -z "$TAG_NAME" ]; then
             TIMESTAMP=$(date +'%Y.%m.%d-%H%M')
             TAG_NAME="v${TIMESTAMP}"
+            echo "No tag found, using generated version: $TAG_NAME"
+          else
+            echo "Using latest tag from repository: $TAG_NAME"
           fi
         fi
         echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+        echo "Selected TAG_NAME: $TAG_NAME"
+
+    # =============================
+    # Download Artifacts
+    # =============================
 
     - name: Fetch Windows exe
       uses: dawidd6/action-download-artifact@v8
@@ -50,107 +54,98 @@ jobs:
         workflow: build-windows.yml
         name: nlpw.exe
 
-    - name: Fetch Windows icu1
+    - name: Fetch Windows ICU DLLs
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-windows.yml
-        name: "icudt74.dll"
+        name: icudt74.dll
 
-    - name: Fetch Windows icu2
+    - name: Fetch Windows ICU DLLs
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-windows.yml
-        name: "icuuc74.dll"
+        name: icuuc74.dll
 
-    # Fetch the correct Linux exe based on the OS version
-    - name: Fetch Linux exe for ubuntu-${{ matrix.os }}
+    - name: Fetch Linux exe (20.04)
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-linux.yml
-        name: nlpl-ubuntu-${{ matrix.os }}.exe  # Corrected for the available artifact name
+        name: nlpl-ubuntu-20.04.exe
+        path: ./linux
 
-    - name: Unzip Linux exe
-      run: |
-        mv nlpl-ubuntu-${{ matrix.os }}.exe ./nlpl-${{ matrix.os }}.exe
+    - name: Fetch Linux exe (22.04)
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: build-linux.yml
+        name: nlpl-ubuntu-22.04.exe
+        path: ./linux
+
+    - name: Fetch Linux ICU Static libicutu (22.04)
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: build-linux.yml
+        name: libicutu-ubuntu-22.04.a
+        path: ./linux
+
+    - name: Fetch Linux ICU Static libicuuc (22.04)
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: build-linux.yml
+        name: libicuuc-ubuntu-22.04.a
+        path: ./linux
+
+    - name: Fetch ICU Shared Libraries (20.04)
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: build-linux.yml
+        name: icu-libs-ubuntu-20.04
+        path: ./linux
 
     - name: List Artifacts from MacOS Build
       run: |
-        echo "🔍 Checking artifacts in build-macos.yml run..."
+        echo "Checking artifacts in build-macos.yml run..."
         LATEST_RUN_ID=$(gh api repos/${{ github.repository }}/actions/workflows/build-macos.yml/runs --paginate | jq -r '.workflow_runs[0].id')
         gh api repos/${{ github.repository }}/actions/runs/$LATEST_RUN_ID/artifacts --paginate | jq '.artifacts[].name'
         echo "LATEST_RUN_ID=$LATEST_RUN_ID" >> $GITHUB_ENV
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Fetch MacOS exe from Correct Run
+    - name: Fetch MacOS exe
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-macos.yml
         name: nlpm.exe
         run_id: ${{ env.LATEST_RUN_ID }}
-    
-    - name: Fetch Engine Files
-      uses: dawidd6/action-download-artifact@v8
-      with:
-        workflow: build-enginefiles.yml
-        name: "nlpengine.zip"
 
-    - name: Fetch VisualText Files
-      uses: dawidd6/action-download-artifact@v8
-      with:
-        workflow: build-visualfiles.yml
-        name: "visualtext.zip"
-
-    - name: Fetch Linux icu1 (non 20.04)
-      if: matrix.os != 'ubuntu-20.04'
-      uses: dawidd6/action-download-artifact@v8
-      with:
-        workflow: build-linux.yml
-        name: libicutu-${{ matrix.os }}.a.zip
-
-    - name: Unzip Linux icu1 (non 20.04)
-      run: |
-        unzip libicutu-${{ matrix.os }}.a.zip
-        mv libicutu.a ./libicutu-${{ matrix.os }}.a
-
-    - name: Fetch Linux icu2 (non 20.04)
-      if: matrix.os != 'ubuntu-20.04'
-      uses: dawidd6/action-download-artifact@v8
-      with:
-        workflow: build-linux.yml
-        name: libicuuc-${{ matrix.os }}.a.zip
-
-    - name: Unzip Linux icu2 (non 20.04)
-      run: |
-        unzip libicuuc-${{ matrix.os }}.a.zip
-        mv libicuuc.a ./libicuuc-${{ matrix.os }}.a
-
-    - name: Fetch ICU Libraries for Linux 20.04
-      if: matrix.os == 'ubuntu-20.04'
-      uses: dawidd6/action-download-artifact@v8
-      with:
-        workflow: build-linux.yml
-        name: icu-libs-ubuntu-20.04.zip
-
-    - name: Unzip ICU Libraries for Linux 20.04
-      if: matrix.os == 'ubuntu-20.04'
-      run: |
-        unzip icu-libs-ubuntu-20.04.zip
-        mv icu-libs/* ./  # Move the contents of icu-libs/ to the current directory
-        
-    - name: Fetch MacOS libicutum.a
+    - name: Fetch MacOS ICU Static Libraries
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-macos.yml
         name: libicutum.a
         run_id: ${{ env.LATEST_RUN_ID }}
 
-    - name: Fetch MacOS libicuucm.a
+    - name: Fetch MacOS ICU Static Libraries
       uses: dawidd6/action-download-artifact@v8
       with:
         workflow: build-macos.yml
         name: libicuucm.a
         run_id: ${{ env.LATEST_RUN_ID }}
+
+    - name: Fetch Engine Files
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: build-enginefiles.yml
+        name: nlpengine.zip
+
+    - name: Fetch VisualText Files
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: build-visualfiles.yml
+        name: visualtext.zip
+
+    # =============================
+    # Create Release
+    # =============================
 
     - name: Create Release
       id: create_release
@@ -161,23 +156,25 @@ jobs:
         body: "NLP Engine Release ${{ env.TAG_NAME }}"
         files: |
           ./nlpw.exe
-          ./nlpl-${{ matrix.os }}.exe  # Corrected filename for the correct Linux version
           ./nlpm.exe
+          ./linux/nlpl-ubuntu-20.04.exe
+          ./linux/nlpl-ubuntu-22.04.exe
           ./icudt74.dll
           ./icuuc74.dll
-          ./libicutu-${{ matrix.os }}.a  # Adjusted for the correct Linux version
-          ./libicuuc-${{ matrix.os }}.a  # Adjusted for the correct Linux version
+          ./linux/libicutu-ubuntu-22.04.a
+          ./linux/libicuuc-ubuntu-22.04.a
+          ./linux/icu-libs-ubuntu-20.04.zip
           ./libicutum.a
           ./libicuucm.a
           ./nlpengine.zip
           ./visualtext.zip
-          ./icu-libs-ubuntu-20.04.zip  # ICU libs for Ubuntu 20.04 (assuming you uploaded this file)
-          ./libicutu-ubuntu-22.04.a.zip  # ICU libraries for Ubuntu 22.04 (adjust as needed)
-          ./libicuuc-ubuntu-22.04.a.zip  # ICU libraries for Ubuntu 22.04 (adjust as needed)
-          ./libicutu-ubuntu-latest.a.zip  # ICU libraries for latest Ubuntu version (adjust as needed)
-          ./libicuuc-ubuntu-latest.a.zip  # ICU libraries for latest Ubuntu version (adjust as needed)
-        token: ${{ secrets.GITHUB_TOKEN }}
-        
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # =============================
+    # Optional: Trigger Downstream Repos
+    # =============================
+
     - name: Trigger nlp-engine-windows workflow (API direct)
       run: |
         echo "Triggering Windows repo with tag ${{ env.TAG_NAME }}"
