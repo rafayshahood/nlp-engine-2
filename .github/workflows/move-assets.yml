@@ -101,6 +101,20 @@ jobs:
         name: icu-libs-ubuntu-20.04
         path: ./linux
 
+    # 🛠️ RENAME STEP STARTS HERE
+    - name: Rename Linux Artifacts
+      run: |
+        echo "Before renaming, files are:"
+        ls ./linux
+        mv ./linux/nlpl ./linux/nlpl-ubuntu-20.04.exe || true
+        cp ./linux/nlpl-ubuntu-20.04.exe ./linux/nlpl-ubuntu-22.04.exe || true
+        mv ./linux/libicutu.a ./linux/libicutu-ubuntu-22.04.a || true
+        mv ./linux/libicuuc.a ./linux/libicuuc-ubuntu-22.04.a || true
+        mv ./linux/icu-libs.zip ./linux/icu-libs-ubuntu-20.04.zip || true
+        echo "After renaming, files are:"
+        ls ./linux
+    # 🛠️ RENAME STEP ENDS HERE
+
     - name: List Artifacts from MacOS Build
       run: |
         echo "Checking artifacts in build-macos.yml run..."
