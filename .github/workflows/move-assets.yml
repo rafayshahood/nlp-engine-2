@@ -80,6 +80,29 @@ jobs:
         name: nlpl-ubuntu-22.04.exe
         path: ./linux
 
+
+    - name: Fetch Linux exe (latest)
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: build-linux.yml
+        name: nlpl-ubuntu-latest.exe
+        path: ./linux
+
+    - name: Fetch Linux ICU Static libicutu (Latest)
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: build-linux.yml
+        name: libicutu-ubuntu-latest.a
+        path: ./linux
+
+    - name: Fetch Linux ICU Static libicuuc (Latest)
+      uses: dawidd6/action-download-artifact@v8
+      with:
+        workflow: build-linux.yml
+        name: libicuuc-ubuntu-latest.a
+        path: ./linux
+       
+
     - name: Fetch Linux ICU Static libicutu (22.04)
       uses: dawidd6/action-download-artifact@v8
       with:
@@ -101,19 +124,18 @@ jobs:
         name: icu-libs-ubuntu-20.04
         path: ./linux
 
-    # 🛠️ RENAME STEP STARTS HERE
     - name: Rename Linux Artifacts
       run: |
         echo "Before renaming, files are:"
         ls ./linux
-        mv ./linux/nlpl ./linux/nlpl-ubuntu-20.04.exe || true
+        mv ./linux/nlpl.exe ./linux/nlpl-ubuntu-20.04.exe || true
         cp ./linux/nlpl-ubuntu-20.04.exe ./linux/nlpl-ubuntu-22.04.exe || true
+        cp ./linux/nlpl-ubuntu-20.04.exe ./linux/nlpl-ubuntu-latest.exe || true
         mv ./linux/libicutu.a ./linux/libicutu-ubuntu-22.04.a || true
         mv ./linux/libicuuc.a ./linux/libicuuc-ubuntu-22.04.a || true
         mv ./linux/icu-libs.zip ./linux/icu-libs-ubuntu-20.04.zip || true
         echo "After renaming, files are:"
         ls ./linux
-    # 🛠️ RENAME STEP ENDS HERE
 
     - name: List Artifacts from MacOS Build
       run: |
@@ -173,8 +195,11 @@ jobs:
           ./nlpm.exe
           ./linux/nlpl-ubuntu-20.04.exe
           ./linux/nlpl-ubuntu-22.04.exe
+          ./linux/nlpl-ubuntu-latest.exe
           ./icudt74.dll
           ./icuuc74.dll
+          ./linux/libicutu-ubuntu-latest.a
+          ./linux/libicuuc-ubuntu-latest.a
           ./linux/libicutu-ubuntu-22.04.a
           ./linux/libicuuc-ubuntu-22.04.a
           ./linux/icu-libs-ubuntu-20.04.zip
