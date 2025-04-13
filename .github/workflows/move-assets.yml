@@ -132,7 +132,9 @@ jobs:
         cp ./linux/nlpl-ubuntu-20.04.exe ./linux/nlpl-ubuntu-22.04.exe || true
         cp ./linux/nlpl-ubuntu-20.04.exe ./linux/nlpl-ubuntu-latest.exe || true
         mv ./linux/libicutu.a ./linux/libicutu-ubuntu-22.04.a || true
+        cp ./linux/libicutu-ubuntu-22.04.a ./linux/libicutu-ubuntu-latest.a || true
         mv ./linux/libicuuc.a ./linux/libicuuc-ubuntu-22.04.a || true
+        cp ./linux/libicuuc-ubuntu-22.04.a ./linux/libicuuc-ubuntu-latest.a || true
         mv ./linux/icu-libs.zip ./linux/icu-libs-ubuntu-20.04.zip || true
         echo "After renaming, files are:"
         ls ./linux
