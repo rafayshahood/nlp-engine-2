@@ -7,7 +7,7 @@ permissions:
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["build-macos.yml"]
+    workflows: ["build-windows.yml", "build-macos.yml", "build-enginefiles.yml", "build-visualfiles.yml"]
     types:
       - completed
   push:
@@ -22,7 +22,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
       with:
-        fetch-depth: 0
+        fetch-depth: 0  # Fetch all history and tags
 
     
     - name: Extract tag name from ref or get latest tag
@@ -210,13 +210,35 @@ jobs:
         zip -r ubuntu-latest.zip ubuntu-latest
         cd ..
 
+    - name: Check executable versions
+      run: |
+        echo "Checking executable versions..."
+    
+        echo "Examining Windows executable for version strings:"
+        strings ./nlpw.exe | grep -i version || echo "No version string found in Windows executable"
+    
+        echo "Examining MacOS executable for file info:"
+        file ./nlpm.exe
+    
+        echo "Windows and Mac file modification times:"
+        ls -la ./nlpw.exe ./nlpm.exe ./icudt74.dll ./icuuc74.dll ./libicutum.a ./libicuucm.a
+    
+        echo "Zipped Linux folders present:"
+        ls -la ./linux/*.zip
+
     - name: Create Release
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ env.TAG_NAME }}
         name: "Release ${{ env.TAG_NAME }}"
-        body: "NLP Engine Release ${{ env.TAG_NAME }}"
+        body: |
+          NLP Engine Release ${{ env.TAG_NAME }}
+        
+          Build information:
+          - Windows build: ${{ env.WIN_RUN_ID }}
+          - Linux build: ${{ env.LINUX_RUN_ID }}
+          - MacOS build: ${{ env.MAC_RUN_ID }}
         files: |
           ./nlpw.exe
           ./nlpm.exe
@@ -232,9 +254,6 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    # =============================
-    # Optional: Trigger Downstream Repos
-    # =============================
 
     - name: Trigger nlp-engine-windows workflow (API direct)
       run: |
