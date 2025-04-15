@@ -111,6 +111,7 @@ jobs:
         workflow: build-linux.yml
         name: nlpl-ubuntu-20.04.exe
         path: ./linux/ubuntu-20.04
+        run_id: ${{ env.LINUX_RUN_ID }}
 
     - name: Fetch Linux exe (22.04)
       uses: dawidd6/action-download-artifact@v8
@@ -118,6 +119,7 @@ jobs:
         workflow: build-linux.yml
         name: nlpl-ubuntu-22.04.exe
         path: ./linux/ubuntu-22.04
+        run_id: ${{ env.LINUX_RUN_ID }}
         
     - name: Fetch Linux exe (latest)
       uses: dawidd6/action-download-artifact@v8
@@ -125,6 +127,7 @@ jobs:
         workflow: build-linux.yml
         name: nlpl-ubuntu-latest.exe
         path: ./linux/ubuntu-latest
+        run_id: ${{ env.LINUX_RUN_ID }}
 
     - name: Fetch Linux ICU (22.04)
       uses: dawidd6/action-download-artifact@v8
@@ -132,6 +135,7 @@ jobs:
         workflow: build-linux.yml
         name: libicutu-ubuntu-22.04.a
         path: ./linux/ubuntu-22.04
+        run_id: ${{ env.LINUX_RUN_ID }}
 
     - name: Fetch Linux ICU (22.04)
       uses: dawidd6/action-download-artifact@v8
@@ -139,6 +143,7 @@ jobs:
         workflow: build-linux.yml
         name: libicuuc-ubuntu-22.04.a
         path: ./linux/ubuntu-22.04
+        run_id: ${{ env.LINUX_RUN_ID }}
 
     - name: Fetch Linux ICU (latest)
       uses: dawidd6/action-download-artifact@v8
@@ -146,6 +151,7 @@ jobs:
         workflow: build-linux.yml
         name: libicutu-ubuntu-latest.a
         path: ./linux/ubuntu-latest
+        run_id: ${{ env.LINUX_RUN_ID }}
 
     - name: Fetch Linux ICU (latest)
       uses: dawidd6/action-download-artifact@v8
@@ -153,6 +159,7 @@ jobs:
         workflow: build-linux.yml
         name: libicuuc-ubuntu-latest.a
         path: ./linux/ubuntu-latest
+        run_id: ${{ env.LINUX_RUN_ID }}
 
     - name: Fetch ICU Shared Libraries (20.04)
       uses: dawidd6/action-download-artifact@v8
@@ -160,6 +167,7 @@ jobs:
         workflow: build-linux.yml
         name: icu-libs-ubuntu-20.04
         path: ./linux/ubuntu-20.04
+        run_id: ${{ env.LINUX_RUN_ID }}
         
     # MacOS artifacts with specific run ID
     - name: Fetch MacOS exe
