@@ -55,7 +55,7 @@ jobs:
             export TZ=Etc/UTC
             apt update && apt install -y \
               git build-essential cmake g++ curl unzip zip tar \
-              autoconf-archive pkg-config python3 ninja-build libicu-dev
+              autoconf-archive pkg-config python3 ninja-build libicu66 libicu-dev && \
             git clone --recurse-submodules https://github.com/VisualText/analyzers.git analyzers
             mkdir -p build
             cd build
