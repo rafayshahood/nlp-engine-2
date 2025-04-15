@@ -41,7 +41,7 @@ jobs:
       # Ubuntu 20.04 (Docker Build)
       # ===============================
       - name: Build and Run (Ubuntu 20.04)
-        if: matrix.id == 'ubuntu-22.04'
+        if: matrix.id == 'docker-ubuntu-20.04'
         uses: addnab/docker-run-action@v3
         with:
           image: ubuntu:20.04
