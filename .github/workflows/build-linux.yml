@@ -67,34 +67,21 @@ jobs:
             cd ..
             mkdir -p rfb-logs data/rfb/spec analyzers/parse-en-us/output
             cp ./bin/nlp ./bin/nlpl.exe
-
+            echo "Copying ICU 66 libraries..."
+            mkdir -p icu-libs
+            cp /usr/lib/x86_64-linux-gnu/libicu*.so.66* ./icu-libs/
+            zip -r icu-libs.zip icu-libs
             ./bin/nlp --version
             ./bin/nlp -ANA ./analyzers/parse-en-us -WORK ./ ./analyzers/parse-en-us/input/doj.txt -LOG rfb-logs -DEV
 
-      - name: Confirm Installed ICU Version (20.04)
-        if: matrix.id == 'docker-ubuntu-20.04'
-        run: |
-          dpkg -l | grep libicu
 
-      - name: Debug ICU Files (20.04)
-        if: matrix.id == 'docker-ubuntu-20.04'
-        run: |
-          echo "Available ICU files:"
-          find /usr/lib/x86_64-linux-gnu -name "libicu*.so*"
-
-      - name: Copy ICU Shared Libraries (20.04)
-        if: matrix.id == 'docker-ubuntu-20.04'
-        run: |
-          mkdir -p icu-libs
-          find /usr/lib/x86_64-linux-gnu -name "libicu*.so.66*" -exec cp {} icu-libs/ \;
-          zip -r icu-libs.zip icu-libs
 
       - name: Upload ICU Libraries Zip (20.04)
         if: matrix.id == 'docker-ubuntu-20.04'
         uses: actions/upload-artifact@v4
         with:
           name: icu-libs-ubuntu-${{ env.VERSION_SUFFIX }}
-          path: icu-libs.zip
+          path: ./icu-libs.zip
 
       # ===============================
       # Non-20.04 (Normal Build)
