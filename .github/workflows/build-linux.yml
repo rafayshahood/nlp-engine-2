@@ -7,7 +7,7 @@ on:
       
 jobs:
   build_engine:
-    name: Build NLP-ENGINE
+    name: name: Build NLP-ENGINE (${{ matrix.display_name }})
     runs-on: ${{ matrix.runner }}
 
     strategy:
@@ -17,12 +17,15 @@ jobs:
               runner: ubuntu-22.04
               version_suffix: "20.04"
               docker_image: "ubuntu:20.04"
+              display_name: "ubuntu-20.04"
             - id: ubuntu-22.04
               runner: ubuntu-22.04
               version_suffix: "22.04"
+              display_name: "ubuntu-22.04"
             - id: ubuntu-latest
               runner: ubuntu-latest
               version_suffix: "latest"
+              display_name: "ubuntu-latest"
         
 
     env:
