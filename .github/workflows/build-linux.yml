@@ -75,7 +75,7 @@ jobs:
         if: matrix.id == 'docker-ubuntu-20.04'
         run: |
           mkdir -p icu-libs
-          cp /usr/lib/x86_64-linux-gnu/libicu*.so.66* ./icu-libs/
+          find /usr/lib/x86_64-linux-gnu -name "libicu*.so.66*" -exec cp {} icu-libs/ \;
           zip -r icu-libs.zip icu-libs
 
       - name: Upload ICU Libraries Zip (20.04)
