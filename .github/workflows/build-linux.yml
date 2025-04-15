@@ -71,6 +71,17 @@ jobs:
             ./bin/nlp --version
             ./bin/nlp -ANA ./analyzers/parse-en-us -WORK ./ ./analyzers/parse-en-us/input/doj.txt -LOG rfb-logs -DEV
 
+      - name: Confirm Installed ICU Version (20.04)
+        if: matrix.id == 'docker-ubuntu-20.04'
+        run: |
+          dpkg -l | grep libicu
+
+      - name: Debug ICU Files (20.04)
+        if: matrix.id == 'docker-ubuntu-20.04'
+        run: |
+          echo "Available ICU files:"
+          find /usr/lib/x86_64-linux-gnu -name "libicu*.so*"
+
       - name: Copy ICU Shared Libraries (20.04)
         if: matrix.id == 'docker-ubuntu-20.04'
         run: |
